@@ -54,8 +54,12 @@ class AIAppiumLens extends BasePlugin {
         log.info(`Arguments: ${JSON.stringify(args)}`);
         const instruction = args[0];
         const b64Screenshot = await driver.getScreenshot();
+        const screenshotsDir = path.join(__dirname, 'screenshots');
+        if (!fs.existsSync(screenshotsDir)) {
+            fs.mkdirSync(screenshotsDir);
+        }
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const screenshotPath = path.join(__dirname, `screenshots/screenshot-${timestamp}.png`);
+        const screenshotPath = path.join(screenshotsDir, `screenshot-${timestamp}.png`);
         log.info(`Screenshot Path: ${screenshotPath}`);
         fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
         const screenshotBuffer = fs.readFileSync(screenshotPath);
