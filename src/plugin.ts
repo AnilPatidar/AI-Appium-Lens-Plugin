@@ -12,14 +12,15 @@ const fs = require('fs');
 
 async function askGoogleVisionAI(instruction: string,encodedImg:string): Promise<any>  {
     log.info(`Instruction Recieved : ${instruction}`);
+    let response;
     try {
-        const response =await createNonStreamingMultipartContent('combokart-d8a0e','us-central1','gemini-1.5-flash-001',encodedImg,instruction);
+        response = await createNonStreamingMultipartContent('combokart-d8a0e','us-central1','gemini-1.5-flash-001',encodedImg,instruction);
          // const response = await processImageAndQuery(imagePath, query);
           console.log("AI Response:", response);
         } catch (error) {
           console.error("Error processing the image or query:", error);
         } 
-    return true;
+    return response;
 }
 
 const SOURCE_URL_REGEX = new RegExp('/session/[^/]+/plugin/ai-appium-lens');
@@ -64,8 +65,7 @@ class AIAppiumLens extends BasePlugin {
         fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
         const screenshotBuffer = fs.readFileSync(screenshotPath);
         const base64Screenshot = screenshotBuffer.toString('base64');
-        await askGoogleVisionAI(instruction,base64Screenshot);
-
+        return await askGoogleVisionAI(instruction,base64Screenshot);
     }
    
 }

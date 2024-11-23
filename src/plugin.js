@@ -19,15 +19,16 @@ const fs = require('fs');
 function askGoogleVisionAI(instruction, encodedImg) {
     return __awaiter(this, void 0, void 0, function* () {
         log.info(`Instruction Recieved : ${instruction}`);
+        let response;
         try {
-            const response = yield (0, google_vertexai_1.createNonStreamingMultipartContent)('combokart-d8a0e', 'us-central1', 'gemini-1.5-flash-001', encodedImg, instruction);
+            response = yield (0, google_vertexai_1.createNonStreamingMultipartContent)('combokart-d8a0e', 'us-central1', 'gemini-1.5-flash-001', encodedImg, instruction);
             // const response = await processImageAndQuery(imagePath, query);
             console.log("AI Response:", response);
         }
         catch (error) {
             console.error("Error processing the image or query:", error);
         }
-        return true;
+        return response;
     });
 }
 const SOURCE_URL_REGEX = new RegExp('/session/[^/]+/plugin/ai-appium-lens');
@@ -47,13 +48,17 @@ class AIAppiumLens extends base_plugin_1.BasePlugin {
             log.info(`Arguments: ${JSON.stringify(args)}`);
             const instruction = args[0];
             const b64Screenshot = yield driver.getScreenshot();
+            const screenshotsDir = path.join(__dirname, 'screenshots');
+            if (!fs.existsSync(screenshotsDir)) {
+                fs.mkdirSync(screenshotsDir);
+            }
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const screenshotPath = path.join(__dirname, `screenshots/screenshot-${timestamp}.png`);
+            const screenshotPath = path.join(screenshotsDir, `screenshot-${timestamp}.png`);
             log.info(`Screenshot Path: ${screenshotPath}`);
             fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
             const screenshotBuffer = fs.readFileSync(screenshotPath);
             const base64Screenshot = screenshotBuffer.toString('base64');
-            yield askGoogleVisionAI(instruction, base64Screenshot);
+            return yield askGoogleVisionAI(instruction, base64Screenshot);
         });
     }
 }
