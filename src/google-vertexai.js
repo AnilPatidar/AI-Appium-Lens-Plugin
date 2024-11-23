@@ -55,7 +55,7 @@ function createNonStreamingMultipartContent(projectId_1, location_1, model_1, im
 function testAI() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const imagePath = path.join(__dirname, 'lobby.png');
+            const imagePath = path.join(__dirname, 'screenshot.png');
             const imageFile = fs.readFileSync(imagePath);
             var encoded = Buffer.from(imageFile).toString('base64');
             console.log("imageBase64:", encoded);

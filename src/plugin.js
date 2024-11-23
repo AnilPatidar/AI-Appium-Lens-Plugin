@@ -47,10 +47,10 @@ class AIAppiumLens extends base_plugin_1.BasePlugin {
             log.info(`Arguments: ${JSON.stringify(args)}`);
             const instruction = args[0];
             const b64Screenshot = yield driver.getScreenshot();
-            const screenshotPath = path.join(__dirname, 'screenshot.png');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const screenshotPath = path.join(__dirname, `screenshots/screenshot-${timestamp}.png`);
             log.info(`Screenshot Path: ${screenshotPath}`);
             fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
-            const image = Buffer.from(b64Screenshot).toString('base64');
             const screenshotBuffer = fs.readFileSync(screenshotPath);
             const base64Screenshot = screenshotBuffer.toString('base64');
             yield askGoogleVisionAI(instruction, base64Screenshot);
