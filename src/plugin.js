@@ -11,21 +11,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_plugin_1 = require("@appium/base-plugin");
 const support_1 = require("appium/support");
+const google_vertexai_1 = require("./google-vertexai");
 const packageJson = require('../package.json');
 const log = support_1.logger.getLogger('ai-appium-lens');
-function askGoogleVisionAI(instruction) {
+const path = require('path');
+const fs = require('fs');
+function askGoogleVisionAI(instruction, encodedImg) {
     return __awaiter(this, void 0, void 0, function* () {
-        log.info(`Instruction: ${instruction}`);
+        log.info(`Instruction Recieved : ${instruction}`);
+        try {
+            const response = yield (0, google_vertexai_1.createNonStreamingMultipartContent)('combokart-d8a0e', 'us-central1', 'gemini-1.5-flash-001', encodedImg, instruction);
+            // const response = await processImageAndQuery(imagePath, query);
+            console.log("AI Response:", response);
+        }
+        catch (error) {
+            console.error("Error processing the image or query:", error);
+        }
         return true;
     });
 }
-const SOURCE_URL_REGEX = new RegExp('/session/[^/]+/plugin/ai-appium-lens/.*');
+const SOURCE_URL_REGEX = new RegExp('/session/[^/]+/plugin/ai-appium-lens');
 // Example usage
 class AIAppiumLens extends base_plugin_1.BasePlugin {
     constructor(pluginName) {
         super(pluginName);
     }
     shouldAvoidProxy(_method, route, _body) {
+        log.info(`Checking if route ${route} should be avoided`);
         return SOURCE_URL_REGEX.test(route);
     }
     askAI(next, driver, ...args) {
@@ -34,20 +46,27 @@ class AIAppiumLens extends base_plugin_1.BasePlugin {
             log.info(`${packageName} : askAI called}`);
             log.info(`Arguments: ${JSON.stringify(args)}`);
             const instruction = args[0];
-            yield askGoogleVisionAI(instruction);
+            const b64Screenshot = yield driver.getScreenshot();
+            const screenshotPath = path.join(__dirname, 'screenshot.png');
+            log.info(`Screenshot Path: ${screenshotPath}`);
+            fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
+            const image = Buffer.from(b64Screenshot).toString('base64');
+            const screenshotBuffer = fs.readFileSync(screenshotPath);
+            const base64Screenshot = screenshotBuffer.toString('base64');
+            yield askGoogleVisionAI(instruction, base64Screenshot);
         });
     }
 }
 AIAppiumLens.newMethodMap = {
-    '/session/:sessionId/plugin/ai-appium-lens/ask': {
-        GET: { command: 'askAI',
+    '/session/:sessionId/plugin/ai-appium-lens': {
+        POST: { command: 'askAI',
             payloadParams: { required: ['instruction'] },
         },
-    },
+    } /* ,
     '/session/:sessionId/plugin/ai-appium-lens/aiClick': {
-        GET: { command: 'aiClick',
-            payloadParams: { required: ['instruction'] },
+       GET:{  command: 'aiClick',
+        payloadParams: {required: ['instruction']},
         },
-    }
+    } */
 };
 exports.default = AIAppiumLens;

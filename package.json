@@ -23,7 +23,7 @@
   },
   "appium": {
     "pluginName": "ai-appium-lens",
-    "mainClass": "CommandViz",
+    "mainClass": "AIAppiumLens",
     "pluginVersion": "1.0.1",
     "pluginType": "appium",
     "pluginPlatform": "android",
@@ -54,11 +54,5 @@
     "typescript": "^5.6.3",
     "@google-cloud/vertexai": "^1.9.0",
     "@google-cloud/vision": "^4.3.2"
-  },
-  "dependencies": {
-    "@google-cloud/vertexai": "^1.9.0",
-    "@google-cloud/vision": "^4.3.2",
-    "@influxdata/influxdb-client": "^1.35.0",
-    "prettier": "^3.3.3"
-  }
+  } 
 }
