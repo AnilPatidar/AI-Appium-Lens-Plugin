@@ -48,7 +48,7 @@ class AIAppiumLens extends BasePlugin {
         '/session/:sessionId/plugin/ai-appium-lens/aiClick': {
             POST: {
                 command: 'aiClick',
-                payloadParams: { required: ['text', 'firstCallOnThisScreen', 'isScreenRefreshed'] },
+                payloadParams: { required: ['text','index', 'firstCallOnThisScreen', 'isScreenRefreshed'] },
             },
         }
     };
@@ -77,8 +77,9 @@ class AIAppiumLens extends BasePlugin {
         log.info(`${packageName} : aiClick called}`);
         log.info(`Arguments: ${JSON.stringify(args)}`);
         const text = args[0];
-        const firstCalllOnThisScreen = args[1];
-        const isScreenRefreshed = args[2];
+        const index = args[1];
+        const firstCalllOnThisScreen = args[2];
+        const isScreenRefreshed = args[3];
         const sessionId = driver.sessionId;
 
         let screenshotPath: string;
@@ -116,7 +117,7 @@ class AIAppiumLens extends BasePlugin {
         }
 
         // Perform the AI click operation using the imageUrl and text
-        return await getCoordinatesByInput(text, screenshotPath,firstCalllOnThisScreen,isScreenRefreshed,sessionId);
+        return await getCoordinatesByInput(text, screenshotPath,firstCalllOnThisScreen,isScreenRefreshed,sessionId,index);
     }
 }
 

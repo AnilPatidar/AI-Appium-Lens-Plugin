@@ -19,7 +19,7 @@ interface TextAnnotation {
 }
 
 // Main function
-export async function getCoordinatesByInput(input: string, ssPath: string, firstCallOnThisScreen: boolean, isScreenRefreshed: boolean, sessionId: string): Promise<Coordinate | null> {
+export async function getCoordinatesByInput(input: string, ssPath: string, firstCallOnThisScreen: boolean, isScreenRefreshed: boolean, sessionId: string, index:number): Promise<Coordinate | null> {
   const keys: string[] = [];
   const values: Coordinate[] = [];
   try {
@@ -65,7 +65,7 @@ export async function getCoordinatesByInput(input: string, ssPath: string, first
       }
     }
 
-    const points = getCoordinates(keys, values, input);
+    const points = getCoordinates(keys, values, input, index);
     if (points) {
       console.log(`Coordinates: (${points.x}, ${points.y})`);
       return points;
@@ -82,30 +82,34 @@ export async function getCoordinatesByInput(input: string, ssPath: string, first
 
 type Coordinate = { x: number, y: number };
 
-function getCoordinates(keys: string[], values: Coordinate[], input: string): Coordinate | null {
-  const inputKeys = input.split(' ').map((key) => key.toLowerCase());
+function getCoordinates(keys: string[], values: Coordinate[], input: string, matchIndex: number = 1): Coordinate | null {
+    const inputKeys = input.split(' ').map((key) => key.toLowerCase());
+    let matchCount = 0;
 
-  for (let i = 0; i <= keys.length - inputKeys.length; i++) {
-    let match = true;
-    for (let j = 0; j < inputKeys.length; j++) {
-      if (keys[i + j] !== inputKeys[j]) {
-        match = false;
-        break;
-      }
+    for (let i = 0; i <= keys.length - inputKeys.length; i++) {
+        let match = true;
+        for (let j = 0; j < inputKeys.length; j++) {
+            if (keys[i + j] !== inputKeys[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            matchCount++;
+            if (matchCount === matchIndex) {
+                return values[i];
+            }
+        }
     }
-    if (match) {
-      return values[i];
-    }
-  }
 
-  return null;
+    return null;
 }
 
 //testAI();
 
 async function testAI() {
   try {
-    const response = await getCoordinatesByInput('continue', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true,true, 'session1');
+    const response = await getCoordinatesByInput('continue', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true,true, 'session1',1);
     console.log("AI Response:", response);
   } catch (error) {
     console.error("Error processing the image or query:", error);

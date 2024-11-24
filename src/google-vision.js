@@ -15,7 +15,7 @@ const loki = require('lokijs');
 const db = new loki('coordinates.db');
 const coordinatesCollection = db.addCollection('coordinates');
 // Main function
-function getCoordinatesByInput(input, ssPath, firstCallOnThisScreen, isScreenRefreshed, sessionId) {
+function getCoordinatesByInput(input, ssPath, firstCallOnThisScreen, isScreenRefreshed, sessionId, index) {
     return __awaiter(this, void 0, void 0, function* () {
         const keys = [];
         const values = [];
@@ -58,7 +58,7 @@ function getCoordinatesByInput(input, ssPath, firstCallOnThisScreen, isScreenRef
                     return null;
                 }
             }
-            const points = getCoordinates(keys, values, input);
+            const points = getCoordinates(keys, values, input, index);
             if (points) {
                 console.log(`Coordinates: (${points.x}, ${points.y})`);
                 return points;
@@ -74,8 +74,9 @@ function getCoordinatesByInput(input, ssPath, firstCallOnThisScreen, isScreenRef
         }
     });
 }
-function getCoordinates(keys, values, input) {
+function getCoordinates(keys, values, input, matchIndex = 1) {
     const inputKeys = input.split(' ').map((key) => key.toLowerCase());
+    let matchCount = 0;
     for (let i = 0; i <= keys.length - inputKeys.length; i++) {
         let match = true;
         for (let j = 0; j < inputKeys.length; j++) {
@@ -85,7 +86,10 @@ function getCoordinates(keys, values, input) {
             }
         }
         if (match) {
-            return values[i];
+            matchCount++;
+            if (matchCount === matchIndex) {
+                return values[i];
+            }
         }
     }
     return null;
@@ -94,7 +98,7 @@ function getCoordinates(keys, values, input) {
 function testAI() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield getCoordinatesByInput('continue', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, true, 'session1');
+            const response = yield getCoordinatesByInput('continue', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, true, 'session1', 1);
             console.log("AI Response:", response);
         }
         catch (error) {
