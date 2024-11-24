@@ -51,15 +51,22 @@ function createNonStreamingMultipartContent(projectId_1, location_1, model_1, im
         }
     });
 }
+//testAI();
 // testing function
 function testAI() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const projectId = process.env.GOOGLE_PROJECT_ID;
+            const location = process.env.GOOGLE_LOCATION;
+            const model = process.env.GOOGLE_MODEL;
+            if (!projectId || !location || !model) {
+                throw new Error('Google Cloud environment variables are not set');
+            }
             const imagePath = path.join(__dirname, 'screenshot.png');
             const imageFile = fs.readFileSync(imagePath);
             var encoded = Buffer.from(imageFile).toString('base64');
             console.log("imageBase64:", encoded);
-            const response = yield createNonStreamingMultipartContent('combokart-d8a0e', 'us-central1', 'gemini-1.5-flash-001', encoded, 'image/jpeg');
+            const response = yield createNonStreamingMultipartContent(projectId, location, model, encoded, 'image/jpeg');
             // const response = await processImageAndQuery(imagePath, query);
             console.log("AI Response:", response);
         }
