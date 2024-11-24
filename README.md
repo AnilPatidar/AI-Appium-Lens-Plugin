@@ -36,8 +36,9 @@ export GOOGLE_PROJECT_ID=your-project-id
 export GOOGLE_LOCATION=your-location
 export GOOGLE_MODEL=your-model
 
- Usage
-AI Click
+## Usage
+
+#AI Click
 The aiClick method allows you to perform a click action on an element identified by AI.
 
 driver.addCommand(HttpMethod.POST,
@@ -49,7 +50,7 @@ driver.addCommand(HttpMethod.POST,
                         "firstCallOnThisScreen",true,
                         "isScreenRefreshed",false)), "click kabaddi tab ");
 
-Ask AI
+#Ask AI
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
 const response = await driver.execute('askAI', {
