@@ -11,7 +11,7 @@ Automated testing often requires interacting with elements on the screen that ma
 Key Highlights of the Plugin
 
 
-Answer natural language queries about the app's UI.
+Answer natural language queries about the app's UI, describes App UI, colour of button, what type of icon on the app, what are the input fields , what type screen is displayed? 
 Provide detailed accessibility insights for visually impaired users.
 Generate actionable outputs like clickable element coordinates and hierarchical structures.
 
@@ -27,6 +27,14 @@ Generate actionable outputs like clickable element coordinates and hierarchical 
 ## Installation
 
 To install the AI Appium Lens Plugin, follow these steps:
+
+appium plugin install --source=npm ai-appium-lens
+
+Set enviornment variables : 
+
+export GOOGLE_PROJECT_ID=your-project-id
+export GOOGLE_LOCATION=your-location
+export GOOGLE_MODEL=your-model
 
  Usage
 AI Click
