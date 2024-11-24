@@ -51,7 +51,6 @@ function createNonStreamingMultipartContent(projectId_1, location_1, model_1, im
         }
     });
 }
-//testAI();
 // testing function
 function testAI() {
     return __awaiter(this, void 0, void 0, function* () {
