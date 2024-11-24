@@ -24,6 +24,22 @@ Generate actionable outputs like clickable element coordinates and hierarchical 
 - **Session Management**: Persist session data and image URLs to maintain context across multiple interactions.
 - **Screenshot Handling**: Automatically take and manage screenshots for AI analysis.
 
+## Prerequisite
+
+You must have a google cloud account with payment configured and a project created.
+
+Download google cloud sdk ( google-cloud-cli-darwin-arm.tar.gz) : https://cloud.google.com/sdk/docs/install
+
+Unzip and go to the path
+
+export PATH=$PATH:/Users/anil-patidar/Downloads/google-cloud-sdk/bin
+ 
+source ~/.zshrc 
+
+gcloud init   (Select project , select email, enable payment in project) 
+gcloud auth application-default login 
+
+
 ## Installation
 
 To install the AI Appium Lens Plugin, follow these steps:
@@ -55,10 +71,12 @@ driver.addCommand(HttpMethod.POST,
 
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
-const response = await driver.execute('askAI', {
-  instruction: 'What do you see on UI?'
-});
 
+        const response = await driver.execute('askAI', {
+         instruction: 'What do you see on UI?'
+         });
+
+                        
 Plugin Responses: “Yes, the image shows three people enjoying each other's company and using their phones. They are smiling and looking happy.”
 
 
