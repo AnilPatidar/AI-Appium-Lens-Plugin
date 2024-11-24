@@ -18,7 +18,14 @@ async function askGoogleVisionAI(instruction: string, encodedImg: string): Promi
     log.info(`Instruction Received: ${instruction}`);
     let response;
     try {
-        response = await createNonStreamingMultipartContent('combokart-d8a0e', 'us-central1', 'gemini-1.5-flash-001', encodedImg, instruction);
+        const projectId = process.env.GOOGLE_PROJECT_ID;
+        const location = process.env.GOOGLE_LOCATION;
+        const model = process.env.GOOGLE_MODEL;
+
+        if (!projectId || !location || !model) {
+            throw new Error('Google Cloud environment variables are not set');
+        }
+        response = await createNonStreamingMultipartContent(projectId, location,model, encodedImg, instruction);
         console.log("AI Response:", response);
     } catch (error) {
         console.error("Error processing the image or query:", error);
