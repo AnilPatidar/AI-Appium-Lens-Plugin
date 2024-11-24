@@ -10,12 +10,9 @@ Automated testing often requires interacting with elements on the screen that ma
 
 Key Highlights of the Plugin
 
-
-Answer natural language queries about the app's UI, describes App UI, colour of button, what type of icon on the app, what are the input fields , what type screen is displayed? 
+Answer natural language queries about the app's UI, describes App UI, colour of button, what type of icon on the app, what are the input fields , what type screen is displayed?
 Provide detailed accessibility insights for visually impaired users.
 Generate actionable outputs like clickable element coordinates and hierarchical structures.
-
-
 
 ## Features
 
@@ -32,13 +29,13 @@ Download google cloud sdk ( google-cloud-cli-darwin-arm.tar.gz) : https://cloud.
 
 Unzip and go to the path
 
+```sh
 export PATH=$PATH:/Users/anil-patidar/Downloads/google-cloud-sdk/bin
- 
-source ~/.zshrc 
+source ~/.zshrc
+gcloud init
+gcloud auth application-default login
 
-gcloud init   (Select project , select email, enable payment in project) 
-gcloud auth application-default login 
-
+```
 
 ## Installation
 
@@ -46,11 +43,13 @@ To install the AI Appium Lens Plugin, follow these steps:
 
 appium plugin install --source=npm ai-appium-lens
 
-Set enviornment variables : 
+Set enviornment variables :
 
+```sh
 export GOOGLE_PROJECT_ID=your-project-id
 export GOOGLE_LOCATION=your-location
 export GOOGLE_MODEL=your-model
+```
 
 ## Usage
 
@@ -59,26 +58,25 @@ export GOOGLE_MODEL=your-model
 The aiClick method allows you to perform a click action on an element identified by AI.
 
 driver.addCommand(HttpMethod.POST,
-                "/session/:sessionId/plugin/ai-appium-lens/aiClick",
-                "aiClick");
+"/session/:sessionId/plugin/ai-appium-lens/aiClick",
+"aiClick");
 
+```sh
         clickByAI( driver.execute("aiClick",
                 ImmutableMap.of("text","kabaddi",
                         "firstCallOnThisScreen",true,
                         "isScreenRefreshed",false)), "click kabaddi tab ");
+```
 
 ## Ask AI
 
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
-
+```sh
         const response = await driver.execute('askAI', {
          instruction: 'What do you see on UI?'
          });
-
-                        
-Plugin Responses: “Yes, the image shows three people enjoying each other's company and using their phones. They are smiling and looking happy.”
-
+```
 
 Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.

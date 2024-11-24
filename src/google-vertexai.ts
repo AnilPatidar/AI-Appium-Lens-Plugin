@@ -55,7 +55,7 @@ export async function createNonStreamingMultipartContent(
 
 }
 
-testAI();
+//testAI();
 
 // testing function
 async function testAI() {
