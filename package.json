@@ -1,6 +1,6 @@
 {
   "name": "ai-appium-lens",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
@@ -24,7 +24,7 @@
   "appium": {
     "pluginName": "ai-appium-lens",
     "mainClass": "AIAppiumLens",
-    "pluginVersion": "1.0.1",
+    "pluginVersion": "2.0.0",
     "pluginType": "appium",
     "pluginPlatform": "android",
     "pluginDescription": "My Appium Plugin",
