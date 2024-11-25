@@ -18,7 +18,7 @@ const google_vertexai_1 = require("./google-vertexai");
 const google_vision_1 = require("./google-vision");
 const lokijs_1 = __importDefault(require("lokijs"));
 const packageJson = require('../package.json');
-const log = support_1.logger.getLogger('ai-appium-lens');
+const log = support_1.logger.getLogger('AI-APPIUM-LENS');
 const path = require('path');
 const fs = require('fs');
 // Initialize LokiJS

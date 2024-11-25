@@ -5,7 +5,7 @@ import { getCoordinatesByInput } from './google-vision';
 import loki from 'lokijs';
 
 const packageJson = require('../package.json');
-const log = logger.getLogger('ai-appium-lens');
+const log = logger.getLogger('AI-APPIUM-LENS');
 
 const path = require('path');
 const fs = require('fs');

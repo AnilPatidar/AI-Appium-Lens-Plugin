@@ -1,6 +1,6 @@
 {
   "name": "ai-appium-lens",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
@@ -19,12 +19,12 @@
   "license": "ISC",
   "description": "Revolutionizing Test Automation with AI-Enabled Appium Plugin, Harnessing AI for Intelligent UI Interactions and Accessibility Insights , An AI-powered Appium plugin that combines:\nGoogle Vision Vertex AI for UI analysis.\nGemini NLP for natural language understanding.\nDesigned to make mobile app automation smarter, more intuitive, and accessible.",
   "peerDependencies": {
-    "appium": "^2.11.3"
+    "appium": "^2.12.1"
   },
   "appium": {
     "pluginName": "ai-appium-lens",
     "mainClass": "AIAppiumLens",
-    "pluginVersion": "2.0.0",
+    "pluginVersion": "2.0.2",
     "pluginType": "appium",
     "pluginPlatform": "android",
     "pluginDescription": "My Appium Plugin",
