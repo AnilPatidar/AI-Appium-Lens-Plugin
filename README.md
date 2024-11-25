@@ -62,10 +62,12 @@ driver.addCommand(HttpMethod.POST,
 "aiClick");
 
 ```sh
-        clickByAI( driver.execute("aiClick",
+       clickByAI( driver.execute("aiClick",
                 ImmutableMap.of("text","kabaddi",
+                        "index",1,
                         "firstCallOnThisScreen",true,
-                        "isScreenRefreshed",false)), "click kabaddi tab ");
+                        "isScreenRefreshed",false
+                )), "click on kabaddi tab");
 ```
 
 ## Ask AI
