@@ -40,7 +40,7 @@ Download google cloud sdk ( google-cloud-cli-darwin-arm.tar.gz) : https://cloud.
 Unzip and go to the path
 
 ```sh
-export PATH=$PATH:/Users/anil-patidar/Downloads/google-cloud-sdk/bin
+export PATH=$PATH:<Actual-PATH>/google-cloud-sdk/bin
 source ~/.zshrc
 gcloud init
 gcloud auth application-default login
