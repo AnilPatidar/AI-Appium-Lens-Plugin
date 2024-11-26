@@ -60,7 +60,13 @@ export GOOGLE_PROJECT_ID=your-project-id
 export GOOGLE_LOCATION=your-location
 export GOOGLE_MODEL=your-model
 ```
+Supported LLM Model
 
+The following models support multimodal prompt responses.
+* Gemini 1.5 Flash
+* Gemini 1.5 Pro
+* Gemini 1.0 Pro Vision
+  
 ## Usage
 
 ## AI Click
