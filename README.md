@@ -1,5 +1,7 @@
 # AI Appium Lens Plugin
 
+https://github.com/AnilPatidar/AI-Appium-Lens-Plugin/blob/main/AI-APPIUM-LENS.png
+
 ## Overview
 
 The AI Appium Lens Plugin is designed to enhance the capabilities of Appium by integrating AI-based image recognition and interaction features. This plugin leverages Google Cloud's Vision and Vertex AI services to provide advanced functionalities such as identifying elements on the screen and performing actions based on AI analysis.
