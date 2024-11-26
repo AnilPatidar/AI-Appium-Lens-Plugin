@@ -73,9 +73,13 @@ The following models support multimodal prompt responses.
 
 The aiClick method allows you to perform a click action on an element identified by AI.
 
-driver.addCommand(HttpMethod.POST,
-"/session/:sessionId/plugin/ai-appium-lens/aiClick",
-"aiClick");
+#First Register the command : 
+
+ 
+        driver.addCommand(HttpMethod.POST,
+                "/session/:sessionId/plugin/ai-appium-lens/aiClick",
+                "aiClick");
+                
 
 ```sh
        clickByAI( driver.execute("aiClick",
@@ -88,13 +92,38 @@ driver.addCommand(HttpMethod.POST,
 
 ## Ask AI
 
+#First Register the command : 
+
+    driver.addCommand(HttpMethod.POST,
+                "/session/:sessionId/plugin/ai-appium-lens/askAI",
+                "askAI");
+
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
 ```sh
-        const response = await driver.execute('askAI', {
-         instruction: 'What do you see on UI?'
-         });
+     Response result =  driver.execute("askAI",
+               ImmutableMap.of("instruction",
+               "What do you see on the UI?" ));
+       System.out.println(result.getValue());
 ```
+
+
+    public void clickByAI(Response result,String text){
+        System.out.println("Clicking on "+text+ " by AI");
+        Map<String, Object> resultMap = (Map<String, Object>) result.getValue();
+        int pixelRatio= 2;
+        int X =  Integer.valueOf(String.valueOf(resultMap.get("x")))/pixelRatio;
+        int Y =  Integer.valueOf(String.valueOf(resultMap.get("y")))/pixelRatio;
+
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+
+        Sequence tap = new Sequence(finger, 1);
+        tap.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), X, Y));
+        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        tap.addAction (new Pause(finger, Duration.ofMillis(0)));
+        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Arrays.asList(tap));
+    }
 
 Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
