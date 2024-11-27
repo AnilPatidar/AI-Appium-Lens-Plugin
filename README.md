@@ -1,8 +1,18 @@
 # AI Appium Lens Plugin
 
+
 ## Overview
 
 The AI Appium Lens Plugin is designed to enhance the capabilities of Appium by integrating AI-based image recognition and interaction features. This plugin leverages Google Cloud's Vision and Vertex AI services to provide advanced functionalities such as identifying elements on the screen and performing actions based on AI analysis.
+
+![image](https://github.com/AnilPatidar/AI-Appium-Lens-Plugin/blob/main/AI-APPIUM-LENS.png)
+
+## About Core Contributor
+
+* Contributor: Anil Patidar. [Linked in](https://in.linkedin.com/in/anilpatidar)
+* Experience: 10+ Years of experience in software testing and automation
+  
+
 
 ## Why is this Plugin Needed?
 
@@ -30,7 +40,7 @@ Download google cloud sdk ( google-cloud-cli-darwin-arm.tar.gz) : https://cloud.
 Unzip and go to the path
 
 ```sh
-export PATH=$PATH:/Users/anil-patidar/Downloads/google-cloud-sdk/bin
+export PATH=$PATH:<Actual-PATH>/google-cloud-sdk/bin
 source ~/.zshrc
 gcloud init
 gcloud auth application-default login
@@ -50,16 +60,26 @@ export GOOGLE_PROJECT_ID=your-project-id
 export GOOGLE_LOCATION=your-location
 export GOOGLE_MODEL=your-model
 ```
+Supported LLM Model
 
+The following models support multimodal prompt responses.
+* Gemini 1.5 Flash
+* Gemini 1.5 Pro
+* Gemini 1.0 Pro Vision
+  
 ## Usage
 
 ## AI Click
 
 The aiClick method allows you to perform a click action on an element identified by AI.
 
-driver.addCommand(HttpMethod.POST,
-"/session/:sessionId/plugin/ai-appium-lens/aiClick",
-"aiClick");
+#First Register the command : 
+
+ 
+        driver.addCommand(HttpMethod.POST,
+                "/session/:sessionId/plugin/ai-appium-lens/aiClick",
+                "aiClick");
+                
 
 ```sh
        clickByAI( driver.execute("aiClick",
@@ -72,13 +92,38 @@ driver.addCommand(HttpMethod.POST,
 
 ## Ask AI
 
+#First Register the command : 
+
+    driver.addCommand(HttpMethod.POST,
+                "/session/:sessionId/plugin/ai-appium-lens/askAI",
+                "askAI");
+
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
 ```sh
-        const response = await driver.execute('askAI', {
-         instruction: 'What do you see on UI?'
-         });
+     Response result =  driver.execute("askAI",
+               ImmutableMap.of("instruction",
+               "What do you see on the UI?" ));
+       System.out.println(result.getValue());
 ```
+
+
+    public void clickByAI(Response result,String text){
+        System.out.println("Clicking on "+text+ " by AI");
+        Map<String, Object> resultMap = (Map<String, Object>) result.getValue();
+        int pixelRatio= 2;
+        int X =  Integer.valueOf(String.valueOf(resultMap.get("x")))/pixelRatio;
+        int Y =  Integer.valueOf(String.valueOf(resultMap.get("y")))/pixelRatio;
+
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+
+        Sequence tap = new Sequence(finger, 1);
+        tap.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), X, Y));
+        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+        tap.addAction (new Pause(finger, Duration.ofMillis(0)));
+        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        driver.perform(Arrays.asList(tap));
+    }
 
 Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
