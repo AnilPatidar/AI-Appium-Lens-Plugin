@@ -9,7 +9,7 @@ The AI Appium Lens Plugin is designed to enhance the capabilities of Appium by i
 
 ## About Core Contributor
 
-* Contributor: Anil Patidar. [Linked in](https://in.linkedin.com/in/anilpatidar)
+* Creator: Anil Patidar. [Linked in](https://in.linkedin.com/in/anilpatidar)
 * Experience: 10+ Years of experience in software testing and automation
   
 
