@@ -34,6 +34,9 @@ Generate actionable outputs like clickable element coordinates and hierarchical 
 ## Prerequisite
 
 You must have a google cloud account with payment configured and a project created.
+- ** Active/Enable two service under google cloud
+* Google Vision AI 
+* Google Vertex AI 
 
 Download google cloud sdk ( google-cloud-cli-darwin-arm.tar.gz) : https://cloud.google.com/sdk/docs/install
 
