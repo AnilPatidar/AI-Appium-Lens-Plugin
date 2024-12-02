@@ -9,9 +9,9 @@ The AI Appium Lens Plugin is designed to enhance the capabilities of Appium by i
 
 ## About Core Contributor
 
-* Contributor: Anil Patidar. [Linked in](https://in.linkedin.com/in/anilpatidar)
-* Experience: 10+ Years of experience in software testing and automation
-  
+* Creator: Anil Patidar. [Linked in](https://in.linkedin.com/in/anilpatidar)
+
+ [Follow me on LinkedIn](https://www.linkedin.com/comm/mynetwork/discovery-see-all?usecase=PEOPLE_FOLLOWS&followMember=anilpatidar)
 
 
 ## Why is this Plugin Needed?
@@ -34,6 +34,9 @@ Generate actionable outputs like clickable element coordinates and hierarchical 
 ## Prerequisite
 
 You must have a google cloud account with payment configured and a project created.
+- ** Active/Enable two service under google cloud
+* Google Vision AI 
+* Google Vertex AI 
 
 Download google cloud sdk ( google-cloud-cli-darwin-arm.tar.gz) : https://cloud.google.com/sdk/docs/install
 
@@ -111,7 +114,7 @@ The askAI method allows you to send an instruction to the AI and get a response 
     public void clickByAI(Response result,String text){
         System.out.println("Clicking on "+text+ " by AI");
         Map<String, Object> resultMap = (Map<String, Object>) result.getValue();
-        int pixelRatio= 2;
+        int pixelRatio= 1; //android, 2x for iphone 6s, 3x for plus models
         int X =  Integer.valueOf(String.valueOf(resultMap.get("x")))/pixelRatio;
         int Y =  Integer.valueOf(String.valueOf(resultMap.get("y")))/pixelRatio;
 
