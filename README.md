@@ -76,7 +76,7 @@ The following models support multimodal prompt responses.
 
 The aiClick method allows you to perform a click action on an element identified by AI.
 
-#First Register the command : 
+# First Register the command : 
 
  
         driver.addCommand(HttpMethod.POST,
@@ -85,17 +85,16 @@ The aiClick method allows you to perform a click action on an element identified
                 
 
 ```sh
-         driver.execute("aiClick",
-                ImmutableMap.of("text","kabaddi",
-                        "index",1,
-                        "firstCallOnThisScreen",true,
-                        "isScreenRefreshed",false
-                ));
+          driver.execute("aiClick",
+                ImmutableMap.of(
+                        "text","Pick Team",
+                        "index", 0, 
+                        "takeANewScreenShot", true));
 ```
 
 ## Ask AI
 
-#First Register the command : 
+# First Register the command : 
 
     driver.addCommand(HttpMethod.POST,
                 "/session/:sessionId/plugin/ai-appium-lens/askAI",
@@ -104,6 +103,7 @@ The aiClick method allows you to perform a click action on an element identified
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
 ```sh
+
      Response result =  driver.execute("askAI",
                ImmutableMap.of("instruction",
                "What do you see on the UI?" ));
@@ -111,22 +111,181 @@ The askAI method allows you to send an instruction to the AI and get a response 
 ```
 
 
-    public void clickByAI(Response result,String text){
-        System.out.println("Clicking on "+text+ " by AI");
-        Map<String, Object> resultMap = (Map<String, Object>) result.getValue();
-        int pixelRatio= 1; //android, 2x for iphone 6s, 3x for plus models
-        int X =  Integer.valueOf(String.valueOf(resultMap.get("x")))/pixelRatio;
-        int Y =  Integer.valueOf(String.valueOf(resultMap.get("y")))/pixelRatio;
+## Assert AI
 
-        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+# First Register the command : 
 
-        Sequence tap = new Sequence(finger, 1);
-        tap.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), X, Y));
-        tap.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-        tap.addAction (new Pause(finger, Duration.ofMillis(0)));
-        tap.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-        driver.perform(Arrays.asList(tap));
+    driver.addCommand(HttpMethod.POST,
+                "/session/:sessionId/plugin/ai-appium-lens/aiAssert",
+                "aiAssert");
+
+The assertAI method allows you get the response in true/false for your statement.
+
+```sh
+
+      Response response=driver.execute("aiAssert",
+                ImmutableMap.of("text","do you see continue button in red color"
+                        ));
+        Boolean result=Boolean.valueOf(response.getValue().toString());
+        System.out.println(result);
+```
+
+## fetchUIElementsMetadataJson AI
+
+# First Register the command : 
+
+        driver.addCommand(HttpMethod.POST,
+                "/session/:sessionId/plugin/ai-appium-lens/fetchUIElementsMetadataJson",
+                "fetchUIElementsMetadataJson");
+
+The assertAI method allows you get complete UI meta info in json formate, 
+Example : 
+
+```json
+[
+  {
+    "text": "No SIM",
+    "color": "white",
+    "position": "top left",
+    "aligned": "not aligned",
+    "above": null,
+    "below": null,
+    "icon": null,
+    "icon_color": null,
+    "icon_category": null
+  },
+  {
+    "text": "1:13 AM",
+    "color": "white",
+    "position": "top right",
+    "aligned": "not aligned",
+    "above": null,
+    "below": null,
+    "icon": null,
+    "icon_color": null,
+    "icon_category": null
+  }
+]
+```
+
+```sh
+
+   ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            List<CustomJsonObject> jsonObjects = objectMapper.readValue(driver.execute("fetchUIElementsMetadataJson").getValue().toString().trim(), new TypeReference<List<CustomJsonObject>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+```
+
+Create this class since it is being used in above fetchUIElementsMetadataJson command.
+```sh
+@JsonIgnoreProperties(ignoreUnknown = true)
+   static public class CustomJsonObject {
+        private String text;
+        private String color;
+        private String position;
+        private String aligned;
+        private String above;
+        private String below;
+        private String icon;
+        private String iconColor;
+        private String iconCategory;
+
+        // Getters and setters
+
+        @JsonProperty("text")
+        public String getText() {
+            return text;
+        }
+
+        @JsonProperty("text")
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        @JsonProperty("color")
+        public String getColor() {
+            return color;
+        }
+
+        @JsonProperty("color")
+        public void setColor(String color) {
+            this.color = color;
+        }
+
+        @JsonProperty("position")
+        public String getPosition() {
+            return position;
+        }
+
+        @JsonProperty("position")
+        public void setPosition(String position) {
+            this.position = position;
+        }
+
+        @JsonProperty("aligned")
+        public String getAligned() {
+            return aligned;
+        }
+
+        @JsonProperty("aligned")
+        public void setAligned(String aligned) {
+            this.aligned = aligned;
+        }
+
+        @JsonProperty("above")
+        public String getAbove() {
+            return above;
+        }
+
+        @JsonProperty("above")
+        public void setAbove(String above) {
+            this.above = above;
+        }
+
+        @JsonProperty("below")
+        public String getBelow() {
+            return below;
+        }
+
+        @JsonProperty("below")
+        public void setBelow(String below) {
+            this.below = below;
+        }
+
+        @JsonProperty("icon")
+        public String getIcon() {
+            return icon;
+        }
+
+        @JsonProperty("icon")
+        public void setIcon(String icon) {
+            this.icon = icon;
+        }
+
+        @JsonProperty("icon_color")
+        public String getIconColor() {
+            return iconColor;
+        }
+
+        @JsonProperty("icon_color")
+        public void setIconColor(String iconColor) {
+            this.iconColor = iconColor;
+        }
+
+        @JsonProperty("icon_category")
+        public String getIconCategory() {
+            return iconCategory;
+        }
+
+        @JsonProperty("icon_category")
+        public void setIconCategory(String iconCategory) {
+            this.iconCategory = iconCategory;
+        }
     }
+
+```
 
 Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
