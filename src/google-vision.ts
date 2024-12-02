@@ -19,11 +19,11 @@ interface TextAnnotation {
 }
 
 // Main function
-export async function getCoordinatesByInput(input: string, ssPath: string, firstCallOnThisScreen: boolean, isScreenRefreshed: boolean, sessionId: string, index:number): Promise<Coordinate | null> {
+export async function getCoordinatesByInput(input: string, ssPath: string,  takeANewScreenShot: boolean, sessionId: string, index:number): Promise<Coordinate | null> {
   const keys: string[] = [];
   const values: Coordinate[] = [];
   try {
-    if (firstCallOnThisScreen || isScreenRefreshed) {
+    if (takeANewScreenShot) {
         // Take a new screenshot and update the session data
       const client = new googleVision.ImageAnnotatorClient();
       const [result] = await client.textDetection({
@@ -111,7 +111,7 @@ async function testAI() {
   try {
     //const multiplier = getDeviceMultiplier(390, 844);
 
-    const response = await getCoordinatesByInput('AUS', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true,true, 'session1',1);
+    const response = await getCoordinatesByInput('AUS', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, 'session1',1);
     console.log("AI Response:", response);
   } catch (error) {
     console.error("Error processing the image or query:", error);

@@ -15,12 +15,12 @@ const loki = require('lokijs');
 const db = new loki('coordinates.db');
 const coordinatesCollection = db.addCollection('coordinates');
 // Main function
-function getCoordinatesByInput(input, ssPath, firstCallOnThisScreen, isScreenRefreshed, sessionId, index) {
+function getCoordinatesByInput(input, ssPath, takeANewScreenShot, sessionId, index) {
     return __awaiter(this, void 0, void 0, function* () {
         const keys = [];
         const values = [];
         try {
-            if (firstCallOnThisScreen || isScreenRefreshed) {
+            if (takeANewScreenShot) {
                 // Take a new screenshot and update the session data
                 const client = new googleVision.ImageAnnotatorClient();
                 const [result] = yield client.textDetection({
@@ -99,7 +99,7 @@ function testAI() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             //const multiplier = getDeviceMultiplier(390, 844);
-            const response = yield getCoordinatesByInput('AUS', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, true, 'session1', 1);
+            const response = yield getCoordinatesByInput('AUS', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, 'session1', 1);
             console.log("AI Response:", response);
         }
         catch (error) {

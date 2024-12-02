@@ -17,7 +17,7 @@ const db = new loki('sessions.db');
 const sessions = db.addCollection('sessions');
 
 async function askGoogleVisionAI(instruction: string, encodedImg: string): Promise<any> {
-    log.info(`Instruction Received: ${instruction}`);
+    log.info(`Instruction Received`);
     let response;
     try {
         const projectId = process.env.GOOGLE_PROJECT_ID;
@@ -57,16 +57,83 @@ class AIAppiumLens extends BasePlugin {
         '/session/:sessionId/plugin/ai-appium-lens/aiClick': {
             POST: {
                 command: 'aiClick',
-                payloadParams: { required: ['text','index', 'firstCallOnThisScreen', 'isScreenRefreshed'] },
+                payloadParams: { required: ['text','index', 'takeANewScreenShot'] },
             },
-        }
+        },
+        '/session/:sessionId/plugin/ai-appium-lens/aiAssert': {
+            POST: {
+                command: 'aiAssert',
+                payloadParams: { required: ['text'] },
+            },
+        },
+        '/session/:sessionId/plugin/ai-appium-lens/fetchUIElementsMetadataJson': {
+            POST: {
+                command: 'fetchUIElementsMetadataJsonaiAssert',
+            },
+        },
     };
 
     async askAI(next: Function, driver: any, ...args: any[]): Promise<any> {
-        const packageName = packageJson.name;
-        log.info(`${packageName} : askAI called}`);
-        log.info(`Arguments: ${JSON.stringify(args)}`);
         const instruction = args[0];
+        const base64Screenshot = await this.takeScreenshot(driver);
+        return await askGoogleVisionAI(instruction, base64Screenshot);
+    }
+
+    async aiAssert(next: Function, driver: any, ...args: any[]): Promise<any> {
+        const instruction = args[0];
+        const modifiedInstruction = `${instruction}, and return the response strictly in only true/false, if you don't agree with the statement, return false, else true`;
+        const base64Screenshot = await this.takeScreenshot(driver);
+        const response = await askGoogleVisionAI(modifiedInstruction, base64Screenshot);
+        return response.replace(/\n/g, '');
+    }
+
+
+    async fetchUIElementsMetadataJsonaiAssert(next: Function, driver: any, ...args: any[]): Promise<any> {
+        const modifiedInstruction = `return me a json in the form of what text you see, what color, what position, are aligned correctly, aligned/not aligned, also mention they are above/below which text, be specific, no mistake are allowed, set null if you don't find any data, example: {
+            "text": "Home",
+            "color": "black",
+            "position": "bottom",
+            "aligned": "not aligned",
+            "above": "Enter mobile number",
+            "below": "Upcoming match",
+            "icon": "Home icon",
+            "icon_color": "red",
+            "icon_category": null,
+            "UI Element": "Button",
+            "UI Type": "tile"
+        }`;
+        const base64Screenshot = await this.takeScreenshot(driver);
+        const response = await askGoogleVisionAI(modifiedInstruction, base64Screenshot);
+        return response.replace(/```json|```/g, '').trim();
+    }
+
+
+    async aiClick(next: Function, driver: any, ...args: any[]): Promise<any> {
+        const text = args[0];
+        const index = args[1];
+        const takeANewScreenShot = args[2];
+        const sessionId = driver.sessionId;
+
+        const screenshotPath = await this.getScreenshotPath(driver, sessionId, takeANewScreenShot);
+        const coordinates = await getCoordinatesByInput(text, screenshotPath, takeANewScreenShot, sessionId, index);
+        if (!coordinates) {
+            throw new Error('Coordinates not found');
+        }
+
+        const multiplier = await this.getDeviceMultiplier(driver);
+        let { x, y } = coordinates;
+        x = x / multiplier;
+        y = y / multiplier;
+
+        const action = this.createClickAction(x, y);
+        if (driver.performActions) {
+            return await driver.performActions([action]);
+        }
+
+        throw new Error("Driver did not implement the 'performActions' command");
+    }
+
+    private async takeScreenshot(driver: any): Promise<string> {
         const b64Screenshot = await driver.getScreenshot();
         const screenshotsDir = path.join(__dirname, 'screenshots');
         if (!fs.existsSync(screenshotsDir)) {
@@ -74,39 +141,19 @@ class AIAppiumLens extends BasePlugin {
         }
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const screenshotPath = path.join(screenshotsDir, `screenshot-${timestamp}.png`);
-        log.info(`Screenshot Path: ${screenshotPath}`);
         await fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
         const screenshotBuffer = fs.readFileSync(screenshotPath);
-        const base64Screenshot = screenshotBuffer.toString('base64');
-        return await askGoogleVisionAI(instruction, base64Screenshot);
+        return screenshotBuffer.toString('base64');
     }
 
-    async aiClick(next: Function, driver: any, ...args: any[]): Promise<any> {
-        const packageName = packageJson.name;
-        log.info(`${packageName} : aiClick called}`);
-        log.info(`Arguments: ${JSON.stringify(args)}`);
-        const text = args[0];
-        const index = args[1];
-        const firstCalllOnThisScreen = args[2];
-        const isScreenRefreshed = args[3];
-        const sessionId = driver.sessionId;
-
-        let screenshotPath: string;
-
-        if (firstCalllOnThisScreen || isScreenRefreshed) {
-            // Take a new screenshot and update the session data
-            log.info(`Making call to AI on new screenshot because flags  firstCalllOnThisScreen:  ${firstCalllOnThisScreen} and isScreenRefreshed: ${isScreenRefreshed}`);
-            const b64Screenshot = await driver.getScreenshot();
+    private async getScreenshotPath(driver: any, sessionId: string, takeANewScreenShot: boolean): Promise<string> {
+        if (takeANewScreenShot) {
+            const base64Screenshot = await this.takeScreenshot(driver);
             const screenshotsDir = path.join(__dirname, 'screenshots');
-            if (!fs.existsSync(screenshotsDir)) {
-                fs.mkdirSync(screenshotsDir);
-            }
             const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            screenshotPath = path.join(screenshotsDir, `screenshot-${timestamp}.png`);
-            log.info(`Screenshot Path: ${screenshotPath}`);
-            await fs.writeFileSync(screenshotPath, b64Screenshot, 'base64');
+            const screenshotPath = path.join(screenshotsDir, `screenshot-${timestamp}.png`);
+            await fs.writeFileSync(screenshotPath, base64Screenshot, 'base64');
 
-            // Update session data
             let sessionData = sessions.findOne({ sessionId });
             if (sessionData) {
                 sessionData.imageUrl = screenshotPath;
@@ -114,56 +161,39 @@ class AIAppiumLens extends BasePlugin {
             } else {
                 sessions.insert({ sessionId, imageUrl: screenshotPath });
             }
+            return screenshotPath;
         } else {
-            // Use the existing screenshot URL
-            log.info(`Using cache because flags firstCalllOnThisScreen:  ${firstCalllOnThisScreen} and isScreenRefreshed: ${isScreenRefreshed}`);
             const sessionData = sessions.findOne({ sessionId });
             if (sessionData) {
-                screenshotPath = sessionData.imageUrl;
+                return sessionData.imageUrl;
             } else {
                 throw new Error('No existing screenshot found for this session');
             }
         }
-        const coordinates = await getCoordinatesByInput(text, screenshotPath, firstCalllOnThisScreen, isScreenRefreshed, sessionId, index);
-        if (!coordinates) {
-            throw new Error('Coordinates not found');
-        }
-        let multiplier;
-        if (driver.constructor.name === 'AndroidUiautomator2Driver') {
-            log.info(`Device is Android`);
-            multiplier = 1;
-        } else if (driver.constructor.name == 'XCUITestDriver') {
-            log.info(`Device is iOS`);
-            const { width, height } = await driver.getWindowSize();
-            log.info(`Screen resolution: ${width}x${height}`);
-            multiplier = await getiOSDeviceMultiplier(width, height);
-        }
-        let { x, y } = coordinates;
-   
-        log.info(`Performing click : ${x} ${y}, and multiplłier: ${multiplier}`);
-        log.info(`Driver is instance of: ${driver.constructor.name}`);
-       
-        x = x / multiplier;
-        y = y / multiplier;
+    }
 
-        const action = {
+    private async getDeviceMultiplier(driver: any): Promise<number> {
+        if (driver.constructor.name === 'AndroidUiautomator2Driver') {
+            return 1;
+        } else if (driver.constructor.name == 'XCUITestDriver') {
+            const { width, height } = await driver.getWindowSize();
+            return await getiOSDeviceMultiplier(width, height);
+        }
+        throw new Error('Unsupported driver type');
+    }
+
+    private createClickAction(x: number, y: number) {
+        return {
             type: 'pointer' as const,
             id: 'mouse',
-            parameters: {pointerType: 'touch' as const},
+            parameters: { pointerType: 'touch' as const },
             actions: [
-                {type: 'pointerMove' as const, x, y, duration: 0},
-                {type: 'pointerDown' as const, button: 0},
-                {type: 'pause' as const, duration: TAP_DURATION_MS},
-                {type: 'pointerUp' as const, button: 0},
+                { type: 'pointerMove' as const, x, y, duration: 0 },
+                { type: 'pointerDown' as const, button: 0 },
+                { type: 'pause' as const, duration: TAP_DURATION_MS },
+                { type: 'pointerUp' as const, button: 0 },
             ]
-        }
-
-        // check if the driver has the appropriate performActions method
-        if (driver.performActions) {
-          return await driver.performActions([action])
-        }
-
-        throw new Error("Driver did not implement the 'performActions' command")
+        };
     }
 }
 
