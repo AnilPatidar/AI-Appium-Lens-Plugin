@@ -143,7 +143,7 @@ The assertAI method allows you get the response in true/false for your statement
                 "/session/:sessionId/plugin/ai-appium-lens/fetchUIElementsMetadataJson",
                 "fetchUIElementsMetadataJson");
 
-The assertAI method allows you get complete UI meta info in json formate, 
+The fetchUIElementsMetadataJson method allows you to get complete UI meta info in json formate, 
 Example : 
 
 ```json
