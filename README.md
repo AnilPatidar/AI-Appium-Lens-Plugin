@@ -114,7 +114,7 @@ The askAI method allows you to send an instruction to the AI and get a response 
     public void clickByAI(Response result,String text){
         System.out.println("Clicking on "+text+ " by AI");
         Map<String, Object> resultMap = (Map<String, Object>) result.getValue();
-        int pixelRatio= 2;
+        int pixelRatio= 1; //android, 2x for iphone 6s, 3x for plus models
         int X =  Integer.valueOf(String.valueOf(resultMap.get("x")))/pixelRatio;
         int Y =  Integer.valueOf(String.valueOf(resultMap.get("y")))/pixelRatio;
 
