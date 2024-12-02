@@ -2,7 +2,9 @@ import { BasePlugin } from '@appium/base-plugin';
 import { logger } from 'appium/support';
 import { createNonStreamingMultipartContent } from './google-vertexai';
 import { getCoordinatesByInput } from './google-vision';
+const { getiOSDeviceMultiplier } = require('./utils/coordinate-finder');
 import loki from 'lokijs';
+const TAP_DURATION_MS = 250
 
 const packageJson = require('../package.json');
 const log = logger.getLogger('AI-APPIUM-LENS');
@@ -122,9 +124,46 @@ class AIAppiumLens extends BasePlugin {
                 throw new Error('No existing screenshot found for this session');
             }
         }
+        const coordinates = await getCoordinatesByInput(text, screenshotPath, firstCalllOnThisScreen, isScreenRefreshed, sessionId, index);
+        if (!coordinates) {
+            throw new Error('Coordinates not found');
+        }
+        let multiplier;
+        if (driver.constructor.name === 'AndroidUiautomator2Driver') {
+            log.info(`Device is Android`);
+            multiplier = 1;
+        } else if (driver.constructor.name == 'XCUITestDriver') {
+            log.info(`Device is iOS`);
+            const { width, height } = await driver.getWindowSize();
+            log.info(`Screen resolution: ${width}x${height}`);
+            multiplier = await getiOSDeviceMultiplier(width, height);
+        }
+        let { x, y } = coordinates;
+   
+        log.info(`Performing click : ${x} ${y}, and multiplłier: ${multiplier}`);
+        log.info(`Driver is instance of: ${driver.constructor.name}`);
+       
+        x = x / multiplier;
+        y = y / multiplier;
 
-        // Perform the AI click operation using the imageUrl and text
-        return await getCoordinatesByInput(text, screenshotPath,firstCalllOnThisScreen,isScreenRefreshed,sessionId,index);
+        const action = {
+            type: 'pointer' as const,
+            id: 'mouse',
+            parameters: {pointerType: 'touch' as const},
+            actions: [
+                {type: 'pointerMove' as const, x, y, duration: 0},
+                {type: 'pointerDown' as const, button: 0},
+                {type: 'pause' as const, duration: TAP_DURATION_MS},
+                {type: 'pointerUp' as const, button: 0},
+            ]
+        }
+
+        // check if the driver has the appropriate performActions method
+        if (driver.performActions) {
+          return await driver.performActions([action])
+        }
+
+        throw new Error("Driver did not implement the 'performActions' command")
     }
 }
 

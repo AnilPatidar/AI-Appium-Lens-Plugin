@@ -98,7 +98,8 @@ function getCoordinates(keys, values, input, matchIndex = 1) {
 function testAI() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield getCoordinatesByInput('continue', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, true, 'session1', 1);
+            //const multiplier = getDeviceMultiplier(390, 844);
+            const response = yield getCoordinatesByInput('AUS', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true, true, 'session1', 1);
             console.log("AI Response:", response);
         }
         catch (error) {

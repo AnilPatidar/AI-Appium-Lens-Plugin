@@ -80,7 +80,7 @@ export async function getCoordinatesByInput(input: string, ssPath: string, first
   }
 }
 
-type Coordinate = { x: number, y: number };
+export type Coordinate = { x: number, y: number };
 
 function getCoordinates(keys: string[], values: Coordinate[], input: string, matchIndex: number = 1): Coordinate | null {
     const inputKeys = input.split(' ').map((key) => key.toLowerCase());
@@ -109,7 +109,9 @@ function getCoordinates(keys: string[], values: Coordinate[], input: string, mat
 
 async function testAI() {
   try {
-    const response = await getCoordinatesByInput('continue', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true,true, 'session1',1);
+    //const multiplier = getDeviceMultiplier(390, 844);
+
+    const response = await getCoordinatesByInput('AUS', '/Users/anil-patidar/Desktop/AppiumLensAI/src/screenshots/screenshot-2024-11-24T17-57-08-339Z.png', true,true, 'session1',1);
     console.log("AI Response:", response);
   } catch (error) {
     console.error("Error processing the image or query:", error);
