@@ -85,12 +85,12 @@ The aiClick method allows you to perform a click action on an element identified
                 
 
 ```sh
-       clickByAI( driver.execute("aiClick",
+         driver.execute("aiClick",
                 ImmutableMap.of("text","kabaddi",
                         "index",1,
                         "firstCallOnThisScreen",true,
                         "isScreenRefreshed",false
-                )), "click on kabaddi tab");
+                ));
 ```
 
 ## Ask AI
