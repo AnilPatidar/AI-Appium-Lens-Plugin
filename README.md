@@ -88,7 +88,7 @@ The aiClick method allows you to perform a click action on an element identified
           driver.execute("aiClick",
                 ImmutableMap.of(
                         "text","Pick Team",
-                        "index", 0, 
+                        "index", 1, 
                         "takeANewScreenShot", true));
 ```
 
