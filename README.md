@@ -76,7 +76,7 @@ The following models support multimodal prompt responses.
 
 The aiClick method allows you to perform a click action on an element identified by AI.
 
-# First Register the command : 
+* First Register the command : 
 
  
         driver.addCommand(HttpMethod.POST,
@@ -94,11 +94,13 @@ The aiClick method allows you to perform a click action on an element identified
 
 ## Ask AI
 
-# First Register the command : 
+* First Register the command : 
 
+```sh
     driver.addCommand(HttpMethod.POST,
                 "/session/:sessionId/plugin/ai-appium-lens/askAI",
                 "askAI");
+```
 
 The askAI method allows you to send an instruction to the AI and get a response based on the current screen.
 
@@ -113,11 +115,14 @@ The askAI method allows you to send an instruction to the AI and get a response 
 
 ## Assert AI
 
-# First Register the command : 
+* First Register the command :
+
+  ```sh
 
     driver.addCommand(HttpMethod.POST,
                 "/session/:sessionId/plugin/ai-appium-lens/aiAssert",
                 "aiAssert");
+  ```
 
 The assertAI method allows you get the response in true/false for your statement.
 
@@ -132,7 +137,7 @@ The assertAI method allows you get the response in true/false for your statement
 
 ## fetchUIElementsMetadataJson AI
 
-# First Register the command : 
+* First Register the command : 
 
         driver.addCommand(HttpMethod.POST,
                 "/session/:sessionId/plugin/ai-appium-lens/fetchUIElementsMetadataJson",
